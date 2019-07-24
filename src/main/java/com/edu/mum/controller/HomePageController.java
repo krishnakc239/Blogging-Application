@@ -29,10 +29,9 @@ public class HomePageController {
     @GetMapping("/index")
     public String home(@RequestParam(defaultValue = "0") int page,
                        Model model) {
-
+        System.out.println("page number === "+ page);
         Page<Post> posts = postService.findAllOrderedByDatePageable(page);
         Pager pager = new Pager(posts);
-
         model.addAttribute("pager", pager);
 
         return "views/home/index";
