@@ -1,0 +1,35 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+
+</head>
+<body>
+<div th:fragment="posts">
+
+    <div class="starter-template panel" th:each="post : ${pager.posts}">
+        <div class="panel-heading">
+            <h1><a th:text="${post.title}" th:href="@{'/post/' + ${post.id}}">Title</a></h1>
+            <div th:text="'Created: ' + ${#dates.format(post.createDate, 'dd-MMM-yyyy')} + ' by '">
+                Created by
+            </div>
+            <div><a th:text="${post.user.username}" th:href="@{'/blog/' + ${post.user.username}}">User</a>
+            </div>
+        </div>
+        <h3 class="panel-body" th:text="${post.body}">Body</h3>
+        <br></br>
+        <form th:action="@{/saveComment}">
+            <i class="ui-icon ui-icon-comment"></i>
+            <input id="showComment" type="button" onclick="showCommentBox()" value="Comment" />
+            <div id="commentArea" class="form-group" style="display: none">
+                <textarea id="textField" class="comment-form comment-content"  placeholder="Write a comment"></textarea>
+                <input id="commentSubmit" onclick="enterComment()" type="submit" value="Enter" >
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>
