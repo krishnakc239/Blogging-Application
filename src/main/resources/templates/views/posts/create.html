@@ -1,0 +1,35 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{views/common/masterlayout}">
+<html lang="en">
+<head></head>
+<body>
+<th:block layout:fragment="content">
+	
+	<h2>Edit Post</h2>
+	
+	<div class="container row">
+		<form action="#" th:action="@{/posts/create}" th:object="${post}" method="post" class="form col-md-5 col-md-offset-7">			
+			<div class="form-group">
+				<label>Title</label>
+				<input type="text" th:field="*{title}" th:class="${#fields.hasErrors('title') ? 'form-control is-invalid' : 'form-control'}" />
+				<div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="invalid-feedback"></div> 
+			</div><!-- Post Title -->
+			<div class="form-group">
+				<label>Content</label>
+				<textarea rows="5" cols="" th:field="*{body}" th:class="${#fields.hasErrors('body') ? 'form-control is-invalid' : 'form-control'}" ></textarea>				 
+				<div th:if="${#fields.hasErrors('body')}" th:errors="*{body}" class="invalid-feedback"></div>
+				<div th:if="${#fields.hasErrors('user')}" th:errors="*{user}" class="invalid-feedback"></div>
+			</div><!-- Post Content -->			
+			<div class="form-group clearfix">
+				<button type="submit" class="btn btn-primary float-right">Create Post</button>
+			</div><!-- Submit Button -->
+			<div class="form-group">
+				<div th:class="${successMessage} ? 'alert alert-success' : ''" th:text="${successMessage}"></div>
+			</div><!-- Success message -->			
+		</form>		
+	</div>
+</th:block>
+</body>
+
+</html>
