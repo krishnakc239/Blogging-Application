@@ -20,6 +20,7 @@ public class UserServiceImp implements UserService {
 //    private final PasswordEncoder passwordEncoder;
 
     private static final String USER_ROLE = "ROLE_USER";
+    private static final String ADMIN_ROLE = "ROLE_ADMIN";
 
     @Autowired
     public UserServiceImp(UserRepository userRepository, RoleRepository roleRepository) {
@@ -28,13 +29,13 @@ public class UserServiceImp implements UserService {
 //        this.passwordEncoder = passwordEncoder;
     }
 
-    public Optional<User> findByEmailAndPassword(String email, String pass) {
-        return userRepository.findByEmailAndPassword(email, pass);
+    public Optional<User> findByUsernameAndPassword(String email, String pass) {
+        return userRepository.findByUsernameAndPassword(email, pass);
     }
 
     @Override
-    public Optional<User> findByUsername(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override
@@ -56,8 +57,14 @@ public class UserServiceImp implements UserService {
         // Encode plaintext password
         user.setPassword(user.getPassword());
         user.setActive(1);
-        // Set Role to ROLE_USER
-        user.setRoles(roleRepository.findByRole(USER_ROLE));
+        // Set Role to ROLE_USER/ROLE_ADMIN
+        int count = userRepository.findAll().size();
+        if (count < 1){
+            user.setRoles(roleRepository.findByRole(ADMIN_ROLE));
+        }else {
+            user.setRoles(roleRepository.findByRole(USER_ROLE));
+        }
+
         return userRepository.save(user);
     }
 
