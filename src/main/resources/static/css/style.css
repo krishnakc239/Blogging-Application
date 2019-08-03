@@ -2502,13 +2502,13 @@ pagination
 }
 .header-top-content .site-logo,
 .header-top-content .left-content {
-  padding: 15px 0;
+  padding: 6px 0;
 }
 .header-top-content.header-three .site-logo {
-  padding: 10px 0 15px;
+  padding: 6px 0 15px;
 }
 .header-top-content.header-three .left-content {
-  margin-top: 12px;
+  margin-top: 6px;
 }
 .header-top-content.header-three .left-content li i {
   color: #0e385d !important;
