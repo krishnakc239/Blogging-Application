@@ -5,8 +5,8 @@ import com.edu.mum.domain.User;
 import com.edu.mum.service.PostService;
 import com.edu.mum.service.UserService;
 import com.edu.mum.util.Pager;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -18,22 +18,19 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import sun.misc.BASE64Encoder;
 
-import javax.sql.rowset.serial.SerialBlob;
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
-import java.sql.Blob;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class PostController {
-
+    private final static String upload_dir= System.getProperty("user.dir")+"/src/main/resources/uploads/images";
     private final PostService postService;
     private final UserService userService;
 
@@ -71,8 +68,12 @@ public class PostController {
             if( !user.isPresent() ){
             bindingResult.rejectValue("user", "error.post", "User cannot be null");
         }
-            MultipartFile img = imgFile;
-            post.setCoverImage(img.getBytes());
+//            MultipartFile img = imgFile;
+            post.setCoverImage(imgFile.getOriginalFilename());
+            Path fileNameAndPath = Paths.get(upload_dir,imgFile.getOriginalFilename());
+
+            Files.write(fileNameAndPath,imgFile.getBytes());
+
             post.setUser(user.get());
             this.postService.create(post);
             System.out.println("post created !!!!!!!!");

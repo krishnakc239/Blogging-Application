@@ -31,8 +31,9 @@ public class Post {
     private String body;
     private double avgRating;
     private int ratedCount;
-    @Lob
-    private byte[] coverImage;
+//    @Lob
+//    private byte[] coverImage;
+    private String coverImage;
 
     @Temporal(TemporalType.TIMESTAMP)
 //    @Column(name = "create_date", nullable = false, updatable = false)
@@ -129,11 +130,11 @@ public class Post {
         this.category = category;
     }
 
-    public byte[] getCoverImage() {
+    public String getCoverImage() {
         return coverImage;
     }
 
-    public void setCoverImage(byte[] coverImage) {
+    public void setCoverImage(String coverImage) {
         this.coverImage = coverImage;
     }
 }

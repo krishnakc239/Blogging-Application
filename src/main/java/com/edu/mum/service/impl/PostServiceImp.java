@@ -31,7 +31,7 @@ public class PostServiceImp implements PostService {
     @Override
     public List<Post> findLatest5() {
         // Create our own query
-        return this.postRepository.findLates5Posts( PageRequest.of(0,5) );
+        return this.postRepository.findLates5Posts( PageRequest.of(0,2) );
         // Using Streams also worked Descending order
         //return this.postRepository.findAll( PageRequest.of(0, 2) ).stream().sorted( (a,b) -> a.getDate().compareTo(b.getDate()) ).collect(Collectors.toList());
     }
