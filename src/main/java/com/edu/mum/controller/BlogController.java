@@ -33,7 +33,6 @@ public class BlogController {
     public String blogForUsername(@PathVariable String username,
                                   @RequestParam(defaultValue = "0") int page,
                                   Model model) {
-
         Optional<User> optionalUser = userService.findByUsername(username);
 
         if (optionalUser.isPresent()) {
@@ -44,10 +43,10 @@ public class BlogController {
             model.addAttribute("pager", pager);
             model.addAttribute("user", user);
 
-            return "/posts";
+            return "views/posts/postList";
 
         } else {
-            return "/error";
+            return "views/error/default";
         }
     }
 }
