@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Set;
 
@@ -16,24 +17,24 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
     @Column(name = "email", unique = true, nullable = false)
     @Email(message = "*Please provide a valid Email")
-    @org.hibernate.validator.constraints.NotEmpty(message = "*Please provide an email")
+    @NotBlank(message = "*Please provide an email")
     private String email;
 
     @Column(name = "password", nullable = false)
     @Length(min = 5, message = "*Your password must have at least 5 characters")
-    @org.hibernate.validator.constraints.NotEmpty(message = "*Please provide your password")
+    @NotBlank(message = "*Please provide your password")
     @JsonIgnore
     private String password;
 
     @Column(name = "username", nullable = false, unique = true)
     @Length(min = 5, message = "*Your username must have at least 5 characters")
-    @org.hibernate.validator.constraints.NotEmpty(message = "*Please provide your name")
+    @NotBlank(message = "*Please provide your name")
     private String username;
 
     @Column(name = "first_name")
@@ -41,7 +42,7 @@ public class User {
     private String firstName;
 
     @Column(name = "last_name")
-    @NotEmpty(message = "*Please provide your last name")
+    @NotBlank(message = "*Please provide your last name")
     private String lastName;
 
     @Column(name = "active", nullable = false)
