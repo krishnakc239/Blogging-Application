@@ -3,9 +3,11 @@ package com.edu.mum.domain;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.sql.Blob;
 import java.util.Collection;
 import java.util.Date;
 
@@ -14,30 +16,39 @@ import java.util.Date;
 public class Post {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
     private Long id;
 
+    private String category;
     @Column(name = "title", nullable = false)
-    @Length(min = 5, message = "*Your title must have at least 5 characters")
     @NotEmpty(message = "*Please provide title")
     private String title;
 
+    @Lob
     @Column(name = "body", columnDefinition = "TEXT")
+    @NotNull(message = "*Please privde the content")
     private String body;
+    private double avgRating;
+    private int ratedCount;
+    @Lob
+    private byte[] coverImage;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_date", nullable = false, updatable = false)
+//    @Column(name = "create_date", nullable = false, updatable = false)
     @CreationTimestamp
     private Date createDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
-    @NotNull
     private User user;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private Collection<Comment> comments;
+
+    public Post(){
+
+    }
 
     public Long getId() {
         return id;
@@ -85,5 +96,44 @@ public class Post {
 
     public void setComments(Collection<Comment> comments) {
         this.comments = comments;
+    }
+
+    public void updateRatedCount() {
+        this.ratedCount++;
+    }
+
+    public void updateAvgRating(double userRating) {
+        System.out.println("user rating= "+ userRating);
+        int ratedCont = getRatedCount()+1;
+        double prevRating = getAvgRating();
+        System.out.println("previous rating  = "+ prevRating);
+        double totalRating = prevRating+userRating;
+        System.out.println("total rating = "+totalRating);
+        this.avgRating = totalRating/ratedCont;
+        System.out.println("final user ratin = "+ getAvgRating());
+    }
+
+    public int getRatedCount() {
+        return ratedCount;
+    }
+
+    public double getAvgRating() {
+        return avgRating;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public byte[] getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(byte[] coverImage) {
+        this.coverImage = coverImage;
     }
 }
