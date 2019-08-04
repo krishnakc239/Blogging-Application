@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{views/common/masterlayout}">
 <html lang="en">
 <head>
@@ -11,13 +10,20 @@
 <body>
 <th:block layout:fragment="content">
     <div class="container">
-<!--        <aside>-->
-<!--            <h2>Recent Posts</h2>-->
-<!--            <a href="#" th:each="p : ${latest5Posts}" th:text="${p.title}" th:href="@{/posts/view/{id}/(id=${p.id})}">Work Begins on HTML5.1</a>-->
-<!--        </aside>-->
-        <div th:replace="/fragments/posts :: posts" th:object="${comment}"/>
+        <div class="form-group col-lg-12">
+            <div th:replace="/fragments/recentPosts :: recentPosts"></div>
+        </div>
 
-        <div th:replace="/fragments/pagination :: pagination(URLparameter='/index')"/>
+        <div class="row form-row ">
+            <div class="form-group col-lg-8col-lg-12">
+                <div th:replace="/fragments/posts :: posts" th:object="${comment}"/>
+
+                <div th:replace="/fragments/pagination :: pagination(URLparameter='/index')"/>
+            </div>
+
+        </div>
+
+
 
     </div><!-- /.container -->
 </th:block>
