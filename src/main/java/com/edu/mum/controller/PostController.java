@@ -5,21 +5,30 @@ import com.edu.mum.domain.User;
 import com.edu.mum.service.PostService;
 import com.edu.mum.service.UserService;
 import com.edu.mum.util.Pager;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import sun.misc.BASE64Encoder;
 
+import javax.sql.rowset.serial.SerialBlob;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.security.Principal;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -42,30 +51,36 @@ public class PostController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/posts/create", method = RequestMethod.POST)
-    public ModelAndView create(@Valid Post post, BindingResult bindingResult){
+    @RequestMapping(value = "/posts/create", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String create(@Valid Post post, @RequestParam("file") MultipartFile imgFile, BindingResult bindingResult,
+                         RedirectAttributes redirectAttributes) throws IOException {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("posts/create");
-        // Perform validation
         if( post.getTitle().isEmpty() ){
             bindingResult.rejectValue("title", "error.post", "Title cannot be empty");
         }
-        if( post.getBody().isEmpty() ){
+        if( post.getBody().isEmpty() ){System.out.println("body empty !!!!!!!!");
+
             bindingResult.rejectValue("body", "error.post", "Content cannot be empty");
         }
-        // Get author
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user = this.userService.findByUsername(auth.getName());
-        if( !user.isPresent() ){
-            bindingResult.rejectValue("author", "error.post", "Author cannot be null");
+        if (bindingResult.hasErrors()) {
+            modelAndView.addObject("successMessage", "There is problem creating this post");
+            modelAndView.setViewName("views/posts/create");
+        } else {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Optional<User> user = this.userService.findByUsername(auth.getName());
+            if( !user.isPresent() ){
+            bindingResult.rejectValue("user", "error.post", "User cannot be null");
         }
-        if( !bindingResult.hasErrors() ){
+            MultipartFile img = imgFile;
+            post.setCoverImage(img.getBytes());
             post.setUser(user.get());
             this.postService.create(post);
-            modelAndView.addObject("successMessage", "Post has been created");
-            modelAndView.addObject("post", new Post());
+            System.out.println("post created !!!!!!!!");
+            redirectAttributes.addFlashAttribute("successMessage","Post has been created, we will let you know when aproved");
+
         }
-        return modelAndView;
+        return "redirect:/posts/create";
+
     }
     @RequestMapping("/posts/view/{id}")
     public String view(@PathVariable("id") Long id, Model model){
@@ -158,9 +173,18 @@ public class PostController {
     public String index(@RequestParam(defaultValue = "0") int page, Model model){
         Page<Post> posts = this.postService.findAllOrderedByDatePageable(page);
         Pager pager = new Pager(posts);
+
+//        model.addAttribute("image", Base64.getEncoder().encodeToString())
         model.addAttribute("pager", pager);
         model.addAttribute("posts", posts);
         return "views/posts/postList";
+    }
+
+    @PostMapping("/post/review")
+    public String ratePost(@RequestParam("rating") Integer rating, @ModelAttribute Post post){
+        post.updateRatedCount();
+        post.updateAvgRating(rating);
+        return "redirect:/posts";
     }
 
     private boolean isPrincipalOwnerOfPost(Principal principal, Post post) {
