@@ -34,7 +34,7 @@ public class User {
 
     @Column(name = "username", nullable = false, unique = true)
     @Length(min = 5, message = "*Your username must have at least 5 characters")
-    @NotBlank(message = "*Please provide your name")
+    @NotBlank(message = "*Please enter your username")
     private String username;
 
     @Column(name = "first_name")
