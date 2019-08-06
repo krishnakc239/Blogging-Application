@@ -47,7 +47,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
 
         http.authorizeRequests()
-                .antMatchers("/","/index","/users/**","/posts","posts/**","/resources/**","/error/**","/error?*").permitAll()
+                .antMatchers("/","/images/**","/index","/error/**","/error?*").permitAll()
 //                .antMatchers("/", "/index", "/error/**", "/posts/**", "/users/logout", "/users/register", "/users/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -71,7 +71,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web
                 .ignoring()
-                .antMatchers("/resources/**", "/templates/**", "/static/**", "/css/**", "/js/**", "/images/**");
+                .antMatchers("/resources/**","/uploads/**", "/templates/**", "/static/**", "/css/**", "/js/**", "/static/images/**");
     }
 
 
