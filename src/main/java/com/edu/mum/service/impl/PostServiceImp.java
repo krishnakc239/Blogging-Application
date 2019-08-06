@@ -47,7 +47,7 @@ public class PostServiceImp implements PostService {
 
     @Override
     public Post create(Post post) {
-        return postRepository.saveAndFlush(post);
+        return postRepository.save(post);
     }
 
     @Override
