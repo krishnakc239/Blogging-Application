@@ -2,11 +2,11 @@ package com.edu.mum.controller;
 
 import com.edu.mum.domain.Post;
 import com.edu.mum.domain.User;
+import com.edu.mum.service.NotificationService;
 import com.edu.mum.service.PostService;
 import com.edu.mum.service.UserService;
 import com.edu.mum.util.Pager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,11 +32,13 @@ public class PostController {
     private final static String upload_dir= System.getProperty("user.dir")+"/src/main/resources/static/uploads/images";
     private final PostService postService;
     private final UserService userService;
+    private NotificationService notifyService;
 
     @Autowired
-    public PostController(PostService postService, UserService userService) {
+    public PostController(PostService postService, UserService userService, NotificationService notifyService) {
         this.postService = postService;
         this.userService = userService;
+        this.notifyService = notifyService;
     }
 
     @RequestMapping(value = "/posts/create", method = RequestMethod.GET)
@@ -150,6 +151,71 @@ public class PostController {
 //        }
 //    }
 
+    /**
+     * Remove a post from the database, notify user if post does not exist
+     * @param id
+     * @return
+     */
+    @RequestMapping("/posts/delete/{id}")
+    public String delete(@PathVariable("id") Long id){
+        Optional<Post> post = this.postService.findById(id);
+        if( !post.isPresent()){
+            notifyService.addErrorMessage("Cannot find post #" + id);
+        } else {
+            this.postService.deleteById(id);
+        }
+        return "redirect:/posts/";
+    }
+    /**
+     * Display for to edit a post
+     * @param id
+     * @param model
+     * @return
+     */
+    @RequestMapping( "/posts/edit/{id}" )
+    public String edit(@PathVariable("id") Long id, Model model){
+        Optional<Post> post = this.postService.findById(id);
+        if( !post.isPresent()  ){
+            System.out.println("inside edit controller whe post does not exists in database");
+            notifyService.addErrorMessage("Cannot find post #" + id);
+            return "redirect:/posts/";
+        }
+        Post post1 = post.get();
+        System.out.println("pst to be edited :"+ post1.getUser().getId());
+        model.addAttribute("post", post1);
+        return "views/posts/edit";
+    }
+    /**
+     * Proceeds to update a post
+     * @param post
+     * @return
+     */
+    @RequestMapping(value = "/posts/edit", method = RequestMethod.POST )
+    public ModelAndView edit(@Valid Post post, BindingResult bindingResult){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("views/posts/edit");
+        // Perform validation
+        if( post.getTitle().isEmpty() ){
+            bindingResult.rejectValue("title", "error.post", "Title cannot be empty");
+        }
+        if( post.getBody().isEmpty() ){
+            bindingResult.rejectValue("body", "error.post", "Content cannot be empty");
+        }
+        // Get author
+        User user = this.userService.findById(post.getUser().getId());
+        if( user==null ){
+            bindingResult.rejectValue("user", "error.post", "Author cannot be null");
+        }
+        if( !bindingResult.hasErrors() ){
+            System.out.println("post has been updated!!");
+            post.setUser(user);
+            this.postService.create(post);
+            modelAndView.addObject("successMessage", "Post has been updated");
+            modelAndView.addObject("post", post);
+        }
+        return modelAndView;
+    }
+
     @RequestMapping(value = "/post/{id}", method = RequestMethod.DELETE)
     public String deletePostWithId(@PathVariable Long id,
                                    Principal principal) {
@@ -177,7 +243,7 @@ public class PostController {
 
 //        model.addAttribute("image", Base64.getEncoder().encodeToString())
         model.addAttribute("pager", pager);
-        model.addAttribute("posts", posts);
+//        model.addAttribute("posts", posts);
         return "views/posts/postList";
     }
 

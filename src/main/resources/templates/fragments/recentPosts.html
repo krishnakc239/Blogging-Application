@@ -24,7 +24,7 @@
 <!--                </li>-->
 <!--            </ul>-->
             <ul class="list-inline" >
-                <li><span class="glyphicon glyphicon-list-alt"></span><h3>Recent Posts</h3></li>
+                <li class="list-inline-item"><h3><span class="glyphicon glyphicon-list-alt"></span>  <span></span>Recent Posts :</h3></li>
                 <li class="list-inline-item" th:each="p: ${latest5Posts}"><h3><a href="#" class="text-info" th:text="${p.title}" th:href="@{/posts/view/{id}/(id=${p.id})}"></a></h3></li>
             </ul>
 <!--            <div class="panel panel-info">-->
