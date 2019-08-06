@@ -1,51 +1,46 @@
 package com.edu.mum.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.security.Principal;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class BlogErrorController implements ErrorController {
+    private static final Logger log = LoggerFactory.getLogger(BlogErrorController.class);
 
     private static final String PATH = "/error";
 
-    @RequestMapping(PATH)
-    public ModelAndView error() {
-        return new ModelAndView("views/error/default");
-    }
+    @RequestMapping("/error")
+    public String handleError(HttpServletRequest request){
+        Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+        String logError = "StatusCode->" + RequestDispatcher.ERROR_STATUS_CODE + "\n ErrorException->" + RequestDispatcher.ERROR_EXCEPTION.toString() + "\n ErrorException->" + RequestDispatcher.ERROR_MESSAGE.toString();
+//        log.error("<-------------------------------->");
+//        log.error("An error occured!!!");
+//        log.error(logError);
+//        log.error("<-------------------------------->");
 
-    @GetMapping("/error/403")
-    public ModelAndView error403() {
-        return new ModelAndView("views/error/403");
+        if( status != null ){
+            Integer statusCode = Integer.valueOf(status.toString());
+            if( statusCode.equals(HttpStatus.NOT_FOUND.value())) {
+                return "views/error/404";
+            } else if( statusCode.equals(HttpStatus.FORBIDDEN)) {
+                return "views/error/403";
+            } else if( statusCode.equals(HttpStatus.INTERNAL_SERVER_ERROR.value())) {
+                return "views/error/500";
+            }
+        }
+        // Do something like logging
+        return "views/error/default";
     }
 
     @Override
-    public String getErrorPath() {
-        return PATH;
-    }
-
-    // for 403 access denied page
-    @RequestMapping(value = "/403", method = RequestMethod.GET)
-    public ModelAndView accesssDenied(Principal user) {
-
-        ModelAndView model = new ModelAndView();
-
-        if (user != null) {
-            model.addObject("msg", "Hi " + user.getName()
-                    + ", you do not have permission to access this page!");
-        } else {
-            model.addObject("msg",
-                    "You do not have permission to access this page!");
-        }
-
-        model.setViewName("views/error/403");
-        return model;
-
+    public String getErrorPath(){
+        return "/views/error";
     }
 }
