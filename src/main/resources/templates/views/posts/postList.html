@@ -19,11 +19,11 @@
 			<th>Author ID</th>
 			<th>Average Rating</th>
 			<th>Rate Count</th>
-			<th class="text-center" sec:authorize="hasAuthority('role_admin')">Action</th>
+			<th class="text-center" sec:authorize="hasAuthority('ROLE_ADMIN')">Action</th>
 		</tr>
 		</thead>
 		<tbody>
-		<tr th:each="p : ${posts}">
+		<tr th:each="p : ${pager.posts}">
 			<td th:text="${p.id}"></td>
 			<td th:text="${p.title}"></td>
 			<td th:text="${p.category}"></td>
@@ -37,7 +37,7 @@
 			</td>
 			<td th:text="${p.avgRating}"></td>
 			<td th:text="${p.ratedCount}"></td>
-			<td class="text-center" sec:authorize="hasAuthority('ADMIN')">
+			<td class="text-center" sec:authorize="hasAuthority('ROLE_ADMIN')">
 				<a href="#" th:href="@{/posts/edit/{id}/(id=${p.id})}"><span class="fa fa-edit"></span></a>
 				<a href="#" role="button" data-toggle="modal" data-target="#myModal"><span class="fa fa-trash"></span></a>
 				<!-- The Modal -->
@@ -65,35 +65,42 @@
 		</tbody>
 		</table>
 		<div class="row">
-			<div class="col-md-12">
-				<ul class="pagination justify-content-center">
-					<!-- Send this if you want to let users to change page size property
-					<li th:class="${posts.number eq 0} ? 'page-item disabled' : 'page-item'">
-			            <a class="page-link" th:if="${not posts.first}" th:href="@{${'/posts'}(page=${posts.number-1},size=${posts.size})}">Previous</a>
-			            <a class="page-link" th:if="${posts.first}" href="#">Previous</a>
-			        </li>
-			        -->
+			<div class="row form-row ">
+				<div class="form-group col-lg-8col-lg-12">
 
-			        <li th:class="${posts.number eq 0} ? 'page-item disabled' : 'page-item'">
-			            <a class="page-link" th:if="${not posts.first}" th:href="@{${'/posts'}(page=${posts.number-1})}">&laquo;</a>
-			            <a class="page-link" th:if="${posts.first}" href="#">&laquo;</a>
-			        </li>
+					<div th:replace="/fragments/pagination :: pagination(URLparameter='/posts')"/>
+				</div>
 
-			        <li th:each="pageNo : ${#numbers.sequence(0, posts.totalPages - 1)}" th:class="${posts.number eq pageNo} ? 'page-item active' : 'page-item'">
-			            <a class="page-link" th:if="${posts.number  eq pageNo}" href="#">
-			                <span th:text="${pageNo + 1}"></span>
-			            </a>
-			            <a class="page-link" th:if="${not (posts.number  eq pageNo)}" th:href="@{${'/posts'}(page=${pageNo})}">
-			                <span th:text="${pageNo + 1}"></span>
-			            </a>
+			</div>
+<!--			<div class="col-md-12">-->
+<!--				<ul class="pagination justify-content-center">-->
+<!--					&lt;!&ndash; Send this if you want to let users to change page size property-->
+<!--					<li th:class="${posts.number eq 0} ? 'page-item disabled' : 'page-item'">-->
+<!--			            <a class="page-link" th:if="${not pager.posts.first}" th:href="@{${'/posts'}(page=${posts.number-1},size=${posts.size})}">Previous</a>-->
+<!--			            <a class="page-link" th:if="${pager.posts.first}" href="#">Previous</a>-->
+<!--			        </li>-->
+<!--			        &ndash;&gt;-->
 
-			        </li>
-			        <li th:class="${posts.number + 1 ge posts.totalPages} ? 'page-item disabled' : 'page-item'">
-			            <a class="page-link" th:if="${not posts.last}" th:href="@{${'/posts'}(page=${posts.number+1})}">&raquo;</a>
-			            <a class="page-link" th:if="${posts.last}" href="#">&raquo;</a>
-			        </li>
-				</ul><!-- ./ pagination -->
-			</div><!-- ./ col-md-7 -->
+<!--			        <li th:class="${pager.posts.number eq 0} ? 'page-item disabled' : 'page-item'">-->
+<!--			            <a class="page-link" th:if="${not pager.posts.first}" th:href="@{${'/posts'}(page=${pager.posts.number-1})}">&laquo;</a>-->
+<!--			            <a class="page-link" th:if="${pager.posts.first}" href="#">&laquo;</a>-->
+<!--			        </li>-->
+
+<!--			        <li th:each="pageNo : ${#numbers.sequence(0, pager.posts.totalPages - 1)}" th:class="${pager.posts.number eq pageNo} ? 'page-item active' : 'page-item'">-->
+<!--			            <a class="page-link" th:if="${pager.posts.number  eq pageNo}" href="#">-->
+<!--			                <span th:text="${pageNo + 1}"></span>-->
+<!--			            </a>-->
+<!--			            <a class="page-link" th:if="${not (pager.posts.number  eq pageNo)}" th:href="@{${'/posts'}(page=${pageNo})}">-->
+<!--			                <span th:text="${pageNo + 1}"></span>-->
+<!--			            </a>-->
+
+<!--			        </li>-->
+<!--			        <li th:class="${pager.posts.number + 1 ge pager.posts.totalPages} ? 'page-item disabled' : 'page-item'">-->
+<!--			            <a class="page-link" th:if="${not pager.posts.last}" th:href="@{${'/posts'}(page=${pager.posts.number+1})}">&raquo;</a>-->
+<!--			            <a class="page-link" th:if="${pager.posts.last}" href="#">&raquo;</a>-->
+<!--			        </li>-->
+<!--				</ul>&lt;!&ndash; ./ pagination &ndash;&gt;-->
+<!--			</div>&lt;!&ndash; ./ col-md-7 &ndash;&gt;-->
 		</div><!-- ./ row -->
 	</div><!-- ./ container -->
 <!-- The footer coming from layout -->
