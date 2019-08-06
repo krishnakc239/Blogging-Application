@@ -8,7 +8,7 @@
 <body>
 <div th:fragment="posts">
 
-    <div class="starter-template " th:each="post : ${pager.posts}">
+    <div class="starter-template panel-body" th:each="post : ${pager.posts}">
         <div class="panel-heading">
             <!--            <div><button class="button button-success">Edit</button> </div>-->
             <!--            <div><button class="button button-success">delete</button> </div>-->
@@ -19,7 +19,9 @@
             <div><a th:text="${post.user.username}" th:href="@{'/blog/' + ${post.user.username}}">User</a>
             </div>
         </div>
-        <div><img  th:src="${'data:image/png;base64,'+${post.coverImage}}"/></div>
+<!--        <img th:src="@{${'/uploads/images/java.jpeg'}}" width="1000" alt="image here"/>-->
+
+        <div><img class="img-responsive"  th:src="@{${'/uploads/images/'+post.coverImage}}"/></div>
         <h3  th:text="${post.body}">Body</h3>
         <br></br>
         <div class="row">

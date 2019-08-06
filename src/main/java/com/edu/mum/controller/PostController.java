@@ -30,7 +30,7 @@ import java.util.Optional;
 
 @Controller
 public class PostController {
-    private final static String upload_dir= System.getProperty("user.dir")+"/src/main/resources/uploads/images";
+    private final static String upload_dir= System.getProperty("user.dir")+"/src/main/resources/static/uploads/images";
     private final PostService postService;
     private final UserService userService;
 
