@@ -227,6 +227,21 @@ public class PostController {
         }
         return modelAndView;
     }
+    @RequestMapping("/posts/setStatus/{id}")
+    public String setStatus(@PathVariable Long id){
+        System.out.println("inside setStatus method");
+        Optional<Post> postOptional = postService.findById(id);
+        if (postOptional.isPresent()){
+            if (!postOptional.get().getStatus()){
+                postOptional.get().setStatus(true);
+                postService.create(postOptional.get());
+                System.out.println("status set to true");
+            }
+        }
+
+        return "redirect:/posts";
+
+    }
 
 //    @RequestMapping(value = "/post/{id}", method = RequestMethod.DELETE)
 //    public String deletePostWithId(@PathVariable Long id,

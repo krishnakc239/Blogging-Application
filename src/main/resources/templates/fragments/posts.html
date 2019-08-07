@@ -8,11 +8,11 @@
 <body>
 <div th:fragment="posts">
 
-    <div class="starter-template panel-body" th:each="post : ${pager.posts}">
+    <div class=" panel-body" th:each="post : ${pager.posts}">
         <div class="panel-heading">
             <!--            <div><button class="button button-success">Edit</button> </div>-->
             <!--            <div><button class="button button-success">delete</button> </div>-->
-            <h1><a th:text="${post.title}" th:href="@{'/post/' + ${post.id}}">Title</a></h1>
+            <h2><a th:text="${post.title}" th:href="@{'/post/' + ${post.id}}">Title</a></h2>
             <div th:text="'Created: ' + ${#dates.format(post.createDate, 'dd-MMM-yyyy')} + ' by '">
                 Created by
             </div>
@@ -22,7 +22,7 @@
 <!--        <img th:src="@{${'/uploads/images/java.jpeg'}}" width="1000" alt="image here"/>-->
 
         <div><img class="img-responsive"  th:src="@{${'/uploads/images/'+post.coverImage}}"/></div>
-        <h3  th:text="${post.body}">Body</h3>
+        <h4  th:text="${post.body}">Body</h4>
         <br></br>
         <div class="row">
             <div class="col-sm-4">

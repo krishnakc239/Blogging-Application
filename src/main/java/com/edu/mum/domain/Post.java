@@ -31,6 +31,7 @@ public class Post {
 //    @Lob
 //    private byte[] coverImage;
     private String coverImage;
+    private boolean status;
     @Temporal(TemporalType.TIMESTAMP)
 //    @Column(name = "create_date", nullable = false, updatable = false)
     @CreationTimestamp
@@ -160,8 +161,17 @@ public class Post {
                 ", ratedCount=" + ratedCount +
                 ", coverImage='" + coverImage + '\'' +
                 ", createDate=" + createDate +
+                ", status=" + status +
                 ", user=" + user +
                 ", comments=" + comments +
                 '}';
+    }
+
+    public boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }
