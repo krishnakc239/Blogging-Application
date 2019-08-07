@@ -2596,9 +2596,9 @@ pagination
 }
 
 .top-menu {
-  padding: 20px 10px;
+  padding: 10px 10px;
   display: block;
-  padding-bottom: 40px;
+  padding-bottom: 20px;
   margin-left: -25px;
 }
 .top-menu ul {
@@ -2629,11 +2629,11 @@ pagination
 }
 
 .header-top-area {
-  padding: 20px;
+  padding: 10px;
 }
 
 .header-bottom-area {
-  padding: 10px 0 0px;
+  padding: 5px 0 0px;
 }
 
 .left-content.tow {
@@ -2680,12 +2680,12 @@ pagination
   padding: 20px 0;
 }
 .header-area.style-two .header-top-content .left-content ul li a {
-  color: #5a5a5a;
+  color: rgba(251, 241, 171, 0.83);
   font-size: 14px;
   padding-right: 15px;
 }
 .header-area.style-two .header-top-content .left-content ul li i {
-  color: #5a5a5a;
+  color: #FBF1AB;
 }
 .header-area.style-two .header-top-content .left-content ul li:last-child a {
   padding-right: 0;
@@ -2695,12 +2695,12 @@ pagination
   letter-spacing: normal;
   color: #3d3d3d;
   text-transform: uppercase;
-  padding: 10px 20px;
+  padding: 80px 80px;
   font-weight: 600;
 }
 @media only screen and (max-width: 1200px) and (min-width: 992px) {
   .header-bottom-content.style-two .top-navigation .menu-list > li > a {
-    padding: 10px 15px;
+    padding: 60px 6px;
   }
 }
 @media only screen and (min-width: 992px) {
@@ -2709,7 +2709,7 @@ pagination
   }
 }
 .header-bottom-content.style-two .menu-list > li {
-  line-height: 60px;
+  line-height: 40px;
 }
 .header-bottom-content.style-two .site-logo a {
   padding: 15px 0;
@@ -2804,6 +2804,7 @@ pagination
 
 .header-bottom-area.four {
   padding: 10px 0;
+  /*height: 50px;*/
 }
 .header-bottom-area.four .social-media {
   margin-top: 20px;
