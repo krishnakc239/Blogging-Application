@@ -53,6 +53,7 @@ public class PostController {
     public String create(@Valid Post post, @RequestParam("file") MultipartFile imgFile, BindingResult bindingResult,
                          RedirectAttributes redirectAttributes) throws IOException {
         ModelAndView modelAndView = new ModelAndView();
+        System.out.println("inside post create method");
         if( post.getTitle().isEmpty() ){
             bindingResult.rejectValue("title", "error.post", "Title cannot be empty");
         }
@@ -66,6 +67,7 @@ public class PostController {
         } else {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             Optional<User> user = this.userService.findByUsername(auth.getName());
+//            System.out.println("logged in user ==="+ user.get());
             if( !user.isPresent() ){
             bindingResult.rejectValue("user", "error.post", "User cannot be null");
         }
@@ -158,13 +160,16 @@ public class PostController {
      */
     @RequestMapping("/posts/delete/{id}")
     public String delete(@PathVariable("id") Long id){
+        System.out.println("post to be deleted ="+id);
         Optional<Post> post = this.postService.findById(id);
         if( !post.isPresent()){
             notifyService.addErrorMessage("Cannot find post #" + id);
         } else {
-            this.postService.deleteById(id);
+//            postService.deleteById(id);
+            postService.delete(post.get());
+            System.out.println("post delted");
         }
-        return "redirect:/posts/";
+        return "redirect:/posts";
     }
     /**
      * Display for to edit a post
@@ -174,9 +179,8 @@ public class PostController {
      */
     @RequestMapping( "/posts/edit/{id}" )
     public String edit(@PathVariable("id") Long id, Model model){
-        Optional<Post> post = this.postService.findById(id);
+        Optional<Post> post = postService.findById(id);
         if( !post.isPresent()  ){
-            System.out.println("inside edit controller whe post does not exists in database");
             notifyService.addErrorMessage("Cannot find post #" + id);
             return "redirect:/posts/";
         }
@@ -191,7 +195,7 @@ public class PostController {
      * @return
      */
     @RequestMapping(value = "/posts/edit", method = RequestMethod.POST )
-    public ModelAndView edit(@Valid Post post, BindingResult bindingResult){
+    public ModelAndView edit(@Valid @ModelAttribute Post post, BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("views/posts/edit");
         // Perform validation
@@ -202,40 +206,48 @@ public class PostController {
             bindingResult.rejectValue("body", "error.post", "Content cannot be empty");
         }
         // Get author
+
         User user = this.userService.findById(post.getUser().getId());
         if( user==null ){
             bindingResult.rejectValue("user", "error.post", "Author cannot be null");
         }
         if( !bindingResult.hasErrors() ){
-            System.out.println("post has been updated!!");
-            post.setUser(user);
-            this.postService.create(post);
-            modelAndView.addObject("successMessage", "Post has been updated");
-            modelAndView.addObject("post", post);
+            Optional<Post> postOptional = postService.findById(post.getId());
+            if (postOptional.isPresent()){
+                Post p = postOptional.get();
+                p.setUser(user);
+                p.setTitle(post.getTitle());
+                p.setBody(post.getBody());
+                this.postService.create(p);
+                modelAndView.addObject("successMessage", "Post has been updated");
+                modelAndView.addObject("post", post);
+            }
+//            post.setUser(user);
+
         }
         return modelAndView;
     }
 
-    @RequestMapping(value = "/post/{id}", method = RequestMethod.DELETE)
-    public String deletePostWithId(@PathVariable Long id,
-                                   Principal principal) {
-
-        Optional<Post> optionalPost = postService.findById(id);
-
-        if (optionalPost.isPresent()) {
-            Post post = optionalPost.get();
-
-            if (isPrincipalOwnerOfPost(principal, post)) {
-                postService.delete(post);
-                return "redirect:/";
-            } else {
-                return "views/error/403";
-            }
-
-        } else {
-            return "views/error/default";
-        }
-    }
+//    @RequestMapping(value = "/post/{id}", method = RequestMethod.DELETE)
+//    public String deletePostWithId(@PathVariable Long id,
+//                                   Principal principal) {
+//
+//        Optional<Post> optionalPost = postService.findById(id);
+//
+//        if (optionalPost.isPresent()) {
+//            Post post = optionalPost.get();
+//
+//            if (isPrincipalOwnerOfPost(principal, post)) {
+//                postService.delete(post);
+//                return "redirect:/";
+//            } else {
+//                return "views/error/403";
+//            }
+//
+//        } else {
+//            return "views/error/default";
+//        }
+//    }
     @RequestMapping("/posts")
     public String index(@RequestParam(defaultValue = "0") int page, Model model){
         Page<Post> posts = this.postService.findAllOrderedByDatePageable(page);
