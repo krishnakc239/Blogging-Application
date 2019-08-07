@@ -17,7 +17,7 @@
 			<th>Category</th>
 <!--			<th>Content</th>-->
 			<th>Date Created</th>
-			<th>Author ID</th>
+			<th>Author </th>
 			<th>Average Rating</th>
 			<th>Rate Count</th>
 			<th>Status</th>
@@ -33,7 +33,7 @@
 			<td th:text="${#dates.format(p.createDate, 'dd-MMM-yyyy')}"></td>
 			<td>
 				<span th:if="${p.user}" th:remove="tag">
-	          		<i>by</i>
+<!--	          		<i>by</i>-->
 					<span th:text="${p.user.firstName != null ? p.user.firstName : p.user.username}">Default Author</span>
 				</span>
 			</td>
