@@ -1,17 +1,13 @@
 package com.edu.mum.domain;
 
-import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Blob;
 import java.util.Collection;
 import java.util.Date;
-@Data
 @Entity
 @Table(name = "posts")
 public class Post {
@@ -35,18 +31,95 @@ public class Post {
 //    @Lob
 //    private byte[] coverImage;
     private String coverImage;
-
     @Temporal(TemporalType.TIMESTAMP)
 //    @Column(name = "create_date", nullable = false, updatable = false)
     @CreationTimestamp
     private Date createDate;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+
+    @ManyToOne(optional = false)
+    @JoinColumn( name = "user_id", referencedColumnName = "user_id")
+    @ToString.Exclude
     private User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post")
+    @ToString.Exclude
     private Collection<Comment> comments;
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public double getAvgRating() {
+        return avgRating;
+    }
+
+    public void setAvgRating(double avgRating) {
+        this.avgRating = avgRating;
+    }
+
+    public int getRatedCount() {
+        return ratedCount;
+    }
+
+    public void setRatedCount(int ratedCount) {
+        this.ratedCount = ratedCount;
+    }
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Collection<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Collection<Comment> comments) {
+        this.comments = comments;
+    }
+
+
 
     public Post(){
 
@@ -67,4 +140,28 @@ public class Post {
         System.out.println("final user ratin = "+ getAvgRating());
     }
 
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", category='" + category + '\'' +
+                ", title='" + title + '\'' +
+                ", body='" + body + '\'' +
+                ", avgRating=" + avgRating +
+                ", ratedCount=" + ratedCount +
+                ", coverImage='" + coverImage + '\'' +
+                ", createDate=" + createDate +
+                ", user=" + user +
+                ", comments=" + comments +
+                '}';
+    }
 }
