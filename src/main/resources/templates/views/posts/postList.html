@@ -34,16 +34,20 @@
 			<td>
 				<span th:if="${p.user}" th:remove="tag">
 <!--	          		<i>by</i>-->
-					<span th:text="${p.user.firstName != null ? p.user.firstName : p.user.username}">Default Author</span>
+					<span th:text="${p.user.firstName != null ? p.user.firstName+', '+p.user.lastName : p.user.username}">Default Author</span>
 				</span>
 			</td>
 			<td th:text="${p.avgRating}"></td>
 			<td th:text="${p.ratedCount}"></td>
 			<td class="text-center" sec:authorize="isAuthenticated()">
 				<div sec:authorize="hasAuthority('ROLE_ADMIN')">
-					<form th:action="@{/posts/setStatus/{id}(id=${p.id})}">
-						<button class="btn " th:classappend="${p.status}? 'btn-success': 'btn-warning'" th:text="${p.status} ? 'Pubished':'Publish'"></button>
+<!--					<form th:action="@{/posts/setStatus/{id}(id=${p.id})}">-->
+<!--						<button class="btn " th:classappend="${p.status}? 'btn-success': 'btn-warning'" th:text="${p.status} ? 'Pubished':'Publish'"></button>-->
+<!--					</form>	-->
+					<form th:action="@{/posts/view/{id}(id=${p.id})}">
+						<button class="btn btn-danger" th:if="${p.status == false}" th:text="'Review'"></button>
 					</form>
+					<button class="btn btn-success" th:if="${p.status}" th:text="'Published'"></button>
 				</div>
 				<div sec:authorize="hasAuthority('ROLE_USER')">
 					<a th:text="${p.status} ? 'Published':'Under Review'"></a>

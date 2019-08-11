@@ -89,11 +89,12 @@ public class PostController {
     @RequestMapping("/posts/view/{id}")
     public String view(@PathVariable("id") Long id, Model model){
         Optional<Post> post = this.postService.findById(id);
-//        if( post == null ){
-//            notifyService.addErrorMessage("Cannot find post #" + id);
-//            return "redirect:/";
-//        }
-        model.addAttribute("post", post);
+        if( post.isPresent() ){
+            model.addAttribute("post", post.get());
+        }else {
+            notifyService.addErrorMessage("Cannot find post #" + id);
+            return "redirect:/error";
+        }
         // To have something like src/main/resources/templates/<CONTROLLER-NAME>/<Mapping-Name-view>
         return "views/posts/view";
     }
