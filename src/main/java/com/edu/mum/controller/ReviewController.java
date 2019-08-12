@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -31,33 +32,38 @@ public class ReviewController {
 
     @GetMapping("/posts/review/{id}")
     public String upateRating(@PathVariable("id") Long postId,
-                              @RequestParam(value = "rating") String rating){
-        System.out.println("inside review mehtod");
-        System.out.println("post id :"+postId);
-        System.out.println("post rating :"+ rating);
+                              @RequestParam(value = "rating") String rating,
+                              RedirectAttributes redirectAttributes
+    ){
         Review review = new Review();
             review.setRating(Integer.parseInt(rating));
 
         if (postId != null){
-
+            System.out.println("post id ="+ postId);
             Optional<Post> reviewedPost = postService.findById(postId);
             review.setPost(reviewedPost.get());
-//            User reviewer = SessionUtils.getCurrentUser();
+//            Optional<User> reviewer = SessionUtils.getCurrentUser();
 
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            System.out.println("auth.getName =="+ auth.getName());
-            if (auth != null || auth.getName().equalsIgnoreCase("anonymousUser")){
                 Optional<User> user = userService.findByUsername(auth.getName());
                 if (!user.isPresent()){
-                    return "redirect:/users/login";
+                    redirectAttributes.addFlashAttribute("msg","Please logged in first.");
+                    return "redirect:/posts/view/{id}";
                 }
-                review.setUser(user.get());
-                reviewService.save(review);
-                System.out.println("review saved!!!!!!");
-            }
+                Optional<Review> duplicateReview = reviewService.findByUserAndPost(user.get(),reviewedPost.get());
+
+                if (duplicateReview.isPresent()){
+                    redirectAttributes.addFlashAttribute("msg","Your review has already been recorded.");
+                    return "redirect:/posts/view/{id}";
+                }
+            review.setUser(user.get());
+            reviewService.save(review);
+            redirectAttributes.addFlashAttribute("msg","Thank you for review.");
+            System.out.println("review saved!!!!!!");
+//            }
 
         }
 
-        return "redirect:/index";
+        return "redirect:/posts/view/{id}";
     }
 }

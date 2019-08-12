@@ -2,6 +2,7 @@ package com.edu.mum.service.impl;
 
 import com.edu.mum.domain.Post;
 import com.edu.mum.domain.Review;
+import com.edu.mum.domain.User;
 import com.edu.mum.repository.ReviewRepository;
 import com.edu.mum.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,5 +30,10 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<Review> findAllReviewsByPost(Post post) {
         return reviewRepository.findAllByPost(post);
+    }
+
+    @Override
+    public Optional<Review> findByUserAndPost(User usr, Post post) {
+        return reviewRepository.findByUserAndPost(usr,post);
     }
 }
