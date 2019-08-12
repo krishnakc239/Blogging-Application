@@ -2,6 +2,7 @@ package com.edu.mum.controller;
 
 import com.edu.mum.domain.Comment;
 import com.edu.mum.domain.Post;
+import com.edu.mum.domain.Review;
 import com.edu.mum.service.PostService;
 import com.edu.mum.util.Pager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,8 @@ public class HomePageController {
         Page<Post> posts = postService.findAllOrderedByDatePageable(page);
         Pager pager = new Pager(posts);
         model.addAttribute("pager", pager);
-        model.addAttribute("comment", new Comment());
+//        model.addAttribute("comment", new Comment());
+//        model.addAttribute("review", new Review());
         return "views/home/index";
     }
 
