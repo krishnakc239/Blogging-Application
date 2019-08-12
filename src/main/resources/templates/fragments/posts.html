@@ -24,42 +24,11 @@
         <div><img class="img-responsive"  th:src="@{${'/uploads/images/'+post.coverImage}}"/></div>
         <h4  th:text="${post.body}">Body</h4>
         <br></br>
-        <div class="row">
-            <div class="col-sm-4">
-                <form th:action="@{/post/review}">
-                    <span class="fa fa-star" th:value="1"/>
-                    <span class="fa fa-star" th:value="2"/>
-                    <span class="fa fa-star" th:value="3"/>
-                    <span class="fa fa-star" th:value="4"/>
-                    <span class="fa fa-star" th:value="5"/>
-                    <button type="button" class="btn btn-success">Submit</button>
+            <div class="col-md-2 pull-right">
+                <form th:action="@{/posts/view/{id}(id = ${post.id})}">
+                    <button type="submit" class="btn btn-info">show more</button>
                 </form>
             </div>
-            <div class="col-sm-6">
-                <form accept-charset="UTF-8" th:action="@{/saveComment}" method="POST">
-                    <span class="fa fa-commenting" id="showComment" onclick="showCommentBox()"></span>
-                    <div id="textArea" style="display: none">
-                    <textarea id="textField" class="form-control" name="text" placeholder="Type in your comment"
-                              rows="5"></textarea>
-                        <h6 class="pull-right" id="count_message"></h6>
-                        <button id="commentSubmit" onclick="enterComment()" class="btn btn-info" type="submit">comment
-                        </button>
-                    </div>
-
-                </form>
-            </div>
-
-        </div>
-        <!--        <form th:action="@{/saveComment}">-->
-        <!--            <i class="ui-icon ui-icon-comment"></i>-->
-        <!--            <input id="showComment" type="button" onclick="showCommentBox()" value="Comment" />-->
-        <!--            <div id="commentArea" class="form-group" style="display: none">-->
-        <!--                <textarea id="textField" class="comment-form comment-content"  placeholder="Write a comment"></textarea>-->
-        <!--                <input id="commentSubmit" onclick="enterComment()" type="submit" value="Enter" >-->
-        <!--            </div>-->
-
-        <!--        </form>-->
-
     </div>
 
 </div>
