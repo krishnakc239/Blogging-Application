@@ -27,9 +27,8 @@
                         <div><img class="img-responsive" th:src="@{${'/uploads/images/'+post.coverImage}}"/></div>
                         <p class="content" th:utext="${post.body}">Post content</p>
                     </article>
-                    <div class="form-group clearfix">
-                        <button type="submit" sec:authorize="hasAuthority('ROLE_ADMIN')"
-                                class="btn btn-primary float-right">Publish
+                    <div class="form-group clearfix" sec:authorize="hasAuthority('ROLE_ADMIN')">
+                        <button type="submit" th:classappend="${post.status}? 'invisible': 'btn btn-info'">Publish
                         </button>
                     </div>
                 </main>

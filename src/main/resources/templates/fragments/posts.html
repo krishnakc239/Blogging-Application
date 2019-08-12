@@ -22,11 +22,12 @@
 <!--        <img th:src="@{${'/uploads/images/java.jpeg'}}" width="1000" alt="image here"/>-->
 
         <div><img class="img-responsive"  th:src="@{${'/uploads/images/'+post.coverImage}}"/></div>
-        <h4  th:text="${post.body}">Body</h4>
-        <br></br>
+<!--        <h4  th:text="${#strings.substring(post.body,0,10)}">Body</h4>-->
+        <h4  th:text="${#strings.length(post.body)>30 ? #strings.abbreviate(post.body,200): #strings.abbreviate(post.body,20)}"></h4>
+<!--        <br></br>-->
             <div class="col-md-2 pull-right">
                 <form th:action="@{/posts/view/{id}(id = ${post.id})}">
-                    <button type="submit" class="btn btn-info">show more</button>
+                    <button type="submit"  class="btn btn-info">show more</button>
                 </form>
             </div>
     </div>
