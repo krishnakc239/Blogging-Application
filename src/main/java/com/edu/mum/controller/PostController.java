@@ -1,10 +1,12 @@
 package com.edu.mum.controller;
 
 import com.edu.mum.domain.Post;
+import com.edu.mum.domain.Review;
 import com.edu.mum.domain.User;
 import com.edu.mum.service.NotificationService;
 import com.edu.mum.service.PostService;
 import com.edu.mum.service.UserService;
+import com.edu.mum.util.ArithmeticUtils;
 import com.edu.mum.util.Pager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,7 +27,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class PostController {
@@ -88,8 +92,10 @@ public class PostController {
     }
     @RequestMapping("/posts/view/{id}")
     public String view(@PathVariable("id") Long id, Model model){
+        System.out.println("isndie /posts/view/{id} id ="+ id);
         Optional<Post> post = this.postService.findById(id);
         if( post.isPresent() ){
+            model.addAttribute("avgReview", ArithmeticUtils.getAvgRating(post.get().getReviews()));
             model.addAttribute("post", post.get());
         }else {
             notifyService.addErrorMessage("Cannot find post #" + id);
@@ -98,17 +104,7 @@ public class PostController {
         // To have something like src/main/resources/templates/<CONTROLLER-NAME>/<Mapping-Name-view>
         return "views/posts/view";
     }
-//    @RequestMapping(value = "/newPost", method = RequestMethod.POST)
-//    public String createNewPost(@Valid Post post,
-//                                BindingResult bindingResult) {
-//
-//        if (bindingResult.hasErrors()) {
-//            return "/postForm";
-//        } else {
-//            postService.create(post);
-//            return "redirect:/blog/" + post.getUser().getUsername();
-//        }
-//    }
+
 
 //    @RequestMapping(value = "/editPost/{id}", method = RequestMethod.GET)
 //    public String editPostWithId(@PathVariable Long id,
