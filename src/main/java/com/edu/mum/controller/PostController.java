@@ -275,12 +275,12 @@ public class PostController {
         return "views/posts/postList";
     }
 
-    @PostMapping("/post/review")
-    public String ratePost(@RequestParam("rating") Integer rating, @ModelAttribute Post post){
-        post.updateRatedCount();
-        post.updateAvgRating(rating);
-        return "redirect:/posts";
-    }
+//    @PostMapping("/post/review")
+//    public String ratePost(@RequestParam("rating") Integer rating, @ModelAttribute Post post){
+//        post.updateRatedCount();
+//        post.updateAvgRating(rating);
+//        return "redirect:/posts";
+//    }
 
     private boolean isPrincipalOwnerOfPost(Principal principal, Post post) {
         return principal != null && principal.getName().equals(post.getUser().getUsername());
