@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @Controller
@@ -33,7 +34,7 @@ public class ReviewController {
     @GetMapping("/posts/review/{id}")
     public String upateRating(@PathVariable("id") Long postId,
                               @RequestParam(value = "rating") String rating,
-                              RedirectAttributes redirectAttributes
+                              RedirectAttributes redirectAttributes, Principal principal
     ){
         Review review = new Review();
             review.setRating(Integer.parseInt(rating));
@@ -44,8 +45,7 @@ public class ReviewController {
             review.setPost(reviewedPost.get());
 //            Optional<User> reviewer = SessionUtils.getCurrentUser();
 
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                Optional<User> user = userService.findByUsername(auth.getName());
+                Optional<User> user = userService.findByUsername(principal.getName());
                 if (!user.isPresent()){
                     redirectAttributes.addFlashAttribute("msg","Please logged in first.");
                     return "redirect:/posts/view/{id}";
