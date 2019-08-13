@@ -90,7 +90,7 @@
                 <br>
                 <h3>Recent Post</h3>
                 <ul>
-                    <li th:each="p: ${latest5Posts}">
+                    <li th:each="p: ${latest5Posts}" th:if="${p.status}">
                         <div class="sidebar-content">
                             <h4><a href="#" class="text-info" th:text="${p.title}" th:href="@{/posts/view/{id}/(id=${p.id})}"></a></h4>
                         </div><!-- .Sidebar-thumb -->

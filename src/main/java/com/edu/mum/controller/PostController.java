@@ -1,8 +1,10 @@
 package com.edu.mum.controller;
 
+import com.edu.mum.domain.Comment;
 import com.edu.mum.domain.Post;
 import com.edu.mum.domain.Review;
 import com.edu.mum.domain.User;
+import com.edu.mum.service.CommentService;
 import com.edu.mum.service.NotificationService;
 import com.edu.mum.service.PostService;
 import com.edu.mum.service.UserService;
@@ -37,12 +39,14 @@ public class PostController {
     private final PostService postService;
     private final UserService userService;
     private NotificationService notifyService;
+    private CommentService commentService;
 
     @Autowired
-    public PostController(PostService postService, UserService userService, NotificationService notifyService) {
+    public PostController(PostService postService, UserService userService, NotificationService notifyService, CommentService commentService) {
         this.postService = postService;
         this.userService = userService;
         this.notifyService = notifyService;
+        this.commentService = commentService;
     }
 
     @RequestMapping(value = "/posts/create", method = RequestMethod.GET)
@@ -97,6 +101,8 @@ public class PostController {
         if( post.isPresent() ){
             model.addAttribute("avgReview", ArithmeticUtils.getAvgRating(post.get().getReviews()));
             model.addAttribute("post", post.get());
+            model.addAttribute("latest5comments", commentService.findFirst5ByPost(post.get()));
+            model.addAttribute("comment", new Comment());
         }else {
             notifyService.addErrorMessage("Cannot find post #" + id);
             return "redirect:/error";
