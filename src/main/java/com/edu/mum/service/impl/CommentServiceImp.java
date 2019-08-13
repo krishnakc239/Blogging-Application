@@ -1,6 +1,7 @@
 package com.edu.mum.service.impl;
 
 import com.edu.mum.domain.Comment;
+import com.edu.mum.domain.Post;
 import com.edu.mum.repository.CommentRepository;
 import com.edu.mum.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class CommentServiceImp implements CommentService {
     }
 
     @Override
-    public List<Comment> findLates5Comments() {
-        return commentRepository.findLates5Comments();
+    public List<Comment> findFirst5ByPost(Post post) {
+        return commentRepository.findFirst5ByPost(post);
     }
 }
