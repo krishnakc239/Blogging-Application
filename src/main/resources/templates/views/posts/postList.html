@@ -82,8 +82,8 @@
 					</div>
 				</td>
 			</div>
-
-			<div sec:authorize="hasAuthority('ROLE_USER')" th:if="${p.status}">
+<!--			show respective user with thier posts only -->
+			<div sec:authorize="hasAuthority('ROLE_USER')" th:if="${p.status and #authentication.name == p.user.username}">
 
 			<td th:text="${p.id}"></td>
 			<td th:text="${p.title}"></td>
