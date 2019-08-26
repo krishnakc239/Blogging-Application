@@ -52,7 +52,7 @@
     <div class="container">
         <div class="row">
 
-            <div class="col-md-12">
+            <div class="col-md-9">
 
                 <form th:action="@{/posts/setStatus/{id}(id=${post.id})}">
 
@@ -76,6 +76,9 @@
                         </div>
                     </main>
                 </form>
+            </div>
+            <div class="col-md-3">
+                <div th:replace="/fragments/recentPosts :: recentPosts"></div>
             </div>
         </div>
         <div class="row">
@@ -132,31 +135,31 @@
                 <div class="card-body">
                     <div th:each="c : ${latest5comments}">
                         <div class="row" style="padding: 5px">
-                        <div class="col-md-2">
-                            <img src="https://image.ibb.co/jw55Ex/def_face.jpg" class="img img-rounded img-fluid"/>
-                            <p class="text-secondary text-center" th:text="${#dates.format(c.createDate, 'dd-MMM-yyyy - HH:mm')}"></p>
-                        </div>
-                        <div class="col-md-10">
-                            <p>
-                                <a class="float-left"
-                                   href="https://maniruzzaman-akash.blogspot.com/p/contact.html"><strong th:text="${c.user.firstName+ ' '+ c.user.lastName}">
+                            <div class="col-md-2">
+                                <img src="https://image.ibb.co/jw55Ex/def_face.jpg" class="img img-rounded img-fluid"/>
+                                <p class="text-secondary text-center" th:text="${#dates.format(c.createDate, 'dd-MMM-yyyy - HH:mm')}"></p>
+                            </div>
+                            <div class="col-md-10">
+                                <p>
+                                    <a class="float-left"
+                                       href="https://maniruzzaman-akash.blogspot.com/p/contact.html"><strong th:text="${c.user.firstName+ ' '+ c.user.lastName}">
                                     </strong></a>
-                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
 
-                            </p>
-                            <div class="clearfix"></div>
-                            <p th:text="${c.body}"></p>
-                            <p>
-                                <a class="float-right btn btn-outline-primary ml-2"> <i class="fa fa-reply"></i>
-                                    Reply</a>
-                                <a class="float-right btn text-white btn-danger"> <i class="fa fa-heart"></i> Like</a>
-                            </p>
-                        </div>
+                                </p>
+                                <div class="clearfix"></div>
+                                <p th:text="${c.body}"></p>
+                                <p>
+                                    <a class="float-right btn btn-outline-primary ml-2"> <i class="fa fa-reply"></i>
+                                        Reply</a>
+                                    <a class="float-right btn text-white btn-danger"> <i class="fa fa-heart"></i> Like</a>
+                                </p>
+                            </div>
                             <hr style="border: 1px dashed black;" />
-                    </div>
+                        </div>
 
                     </div>
                 </div>
@@ -164,7 +167,7 @@
 
         </div>
 
-
+    </div>
 </th:block>
 <!--<div th:replace="fragments/comments :: comments"></div>-->
 </body>
