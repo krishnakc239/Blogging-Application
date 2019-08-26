@@ -1,10 +1,13 @@
 package com.edu.mum.service;
 
+import com.edu.mum.domain.Category;
 import com.edu.mum.domain.Post;
 import com.edu.mum.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,14 +16,9 @@ public interface PostService {
 
     Post create(Post post);
 
-    /**
-     * Finds a {@link Page ) of {@link Post} of provided user ordered by date
-     */
     Page<Post> findByUserOrderedByDatePageable(User user, int page);
+    Page<Post> findAllByTitleContainingIgnoreCaseOrUser_FirstNameContainingIgnoreCase(String title, String authorFirstName, int page);
 
-    /**
-     * Finds a {@link Page ) of all {@link Post} ordered by date
-     */
     Page<Post> findAllOrderedByDatePageable(int page);
 //    Page<Post> findAll(Pageable pageable);
 
@@ -36,4 +34,16 @@ public interface PostService {
     Post edit(Post post);
 
     void deleteById(Long id);
+
+    double getEarningByPost(Long id);
+
+    int getTotalPostCount(boolean status);
+
+    int getClaimedPostCount();
+
+    int getPostCountForUser(User user, boolean status);
+
+    int getClaimedPostCountByUser(User user);
+
+    List<Category> getCategoryForUser(User user);
 }
