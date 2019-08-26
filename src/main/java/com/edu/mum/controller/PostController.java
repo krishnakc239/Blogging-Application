@@ -1,17 +1,12 @@
 package com.edu.mum.controller;
 
-import com.edu.mum.domain.Comment;
-import com.edu.mum.domain.Post;
-import com.edu.mum.domain.Review;
-import com.edu.mum.domain.User;
-import com.edu.mum.service.CommentService;
-import com.edu.mum.service.NotificationService;
-import com.edu.mum.service.PostService;
-import com.edu.mum.service.UserService;
+import com.edu.mum.domain.*;
+import com.edu.mum.service.*;
 import com.edu.mum.util.ArithmeticUtils;
 import com.edu.mum.util.Pager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 public class PostController {
@@ -42,19 +36,22 @@ public class PostController {
     private final UserService userService;
     private NotificationService notifyService;
     private CommentService commentService;
+    private CategoryService categoryService;
 
     @Autowired
-    public PostController(PostService postService, UserService userService, NotificationService notifyService, CommentService commentService) {
+    public PostController(PostService postService, UserService userService, NotificationService notifyService, CommentService commentService, CategoryService categoryService) {
         this.postService = postService;
         this.userService = userService;
         this.notifyService = notifyService;
         this.commentService = commentService;
+        this.categoryService = categoryService;
     }
 
     @RequestMapping(value = "/posts/create", method = RequestMethod.GET)
     public ModelAndView create(){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("post",new Post());
+        modelAndView.addObject("categories", categoryService.getAllCategory());
         modelAndView.setViewName("views/posts/create");
         return modelAndView;
     }
@@ -79,8 +76,8 @@ public class PostController {
             Optional<User> user = this.userService.findByUsername(auth.getName());
 //            System.out.println("logged in user ==="+ user.get());
             if( !user.isPresent() ){
-            bindingResult.rejectValue("user", "error.post", "User cannot be null");
-        }
+                bindingResult.rejectValue("user", "error.post", "User cannot be null");
+            }
 //            MultipartFile img = imgFile;
             post.setCoverImage(imgFile.getOriginalFilename());
             Path fileNameAndPath = Paths.get(upload_dir,imgFile.getOriginalFilename());
@@ -98,9 +95,13 @@ public class PostController {
     }
     @RequestMapping("/posts/view/{id}")
     public String view(@PathVariable("id") Long id, Model model){
-        System.out.println("isndie /posts/view/{id} id ="+ id);
         Optional<Post> post = this.postService.findById(id);
         if( post.isPresent() ){
+            // Get last 5 post
+            List<Post> latest5Posts = this.postService.findLatest5();
+            // Send results to view model
+            model.addAttribute("latest5Posts", latest5Posts);
+
             model.addAttribute("avgReview", ArithmeticUtils.getAvgRating(post.get().getReviews()));
             model.addAttribute("post", post.get());
             model.addAttribute("latest5comments", commentService.findFirst5ByPost(post.get()));
@@ -112,51 +113,6 @@ public class PostController {
         // To have something like src/main/resources/templates/<CONTROLLER-NAME>/<Mapping-Name-view>
         return "views/posts/view";
     }
-
-
-//    @RequestMapping(value = "/editPost/{id}", method = RequestMethod.GET)
-//    public String editPostWithId(@PathVariable Long id,
-//                                 Principal principal,
-//                                 Model model) {
-//
-//        Optional<Post> optionalPost = postService.findById(id);
-//
-//        if (optionalPost.isPresent()) {
-//            Post post = optionalPost.get();
-//
-//            if (isPrincipalOwnerOfPost(principal, post)) {
-//                model.addAttribute("post", post);
-//                return "/postForm";
-//            } else {
-//                return "/403";
-//            }
-//
-//        } else {
-//            return "/error";
-//        }
-//    }
-
-//    @RequestMapping(value = "/post/{id}", method = RequestMethod.GET)
-//    public String getPostWithId(@PathVariable Long id,
-//                                Principal principal,
-//                                Model model) {
-//
-//        Optional<Post> optionalPost = postService.findById(id);
-//
-//        if (optionalPost.isPresent()) {
-//            Post post = optionalPost.get();
-//
-//            model.addAttribute("post", post);
-//            if (isPrincipalOwnerOfPost(principal, post)) {
-//                model.addAttribute("username", principal.getName());
-//            }
-//
-//            return "/post";
-//
-//        } else {
-//            return "/error";
-//        }
-//    }
 
     /**
      * Remove a post from the database, notify user if post does not exist
@@ -190,6 +146,7 @@ public class PostController {
             return "redirect:/posts/";
         }
         Post post1 = post.get();
+        model.addAttribute("categories",categoryService.getAllCategory());
         System.out.println("pst to be edited :"+ post1.getUser().getId());
         model.addAttribute("post", post1);
         return "views/posts/edit";
@@ -222,6 +179,7 @@ public class PostController {
                 Post p = postOptional.get();
                 p.setUser(user);
                 p.setTitle(post.getTitle());
+                p.setCategory(post.getCategory());
                 p.setBody(post.getBody());
                 this.postService.create(p);
                 modelAndView.addObject("successMessage", "Post has been updated");
@@ -248,26 +206,6 @@ public class PostController {
 
     }
 
-//    @RequestMapping(value = "/post/{id}", method = RequestMethod.DELETE)
-//    public String deletePostWithId(@PathVariable Long id,
-//                                   Principal principal) {
-//
-//        Optional<Post> optionalPost = postService.findById(id);
-//
-//        if (optionalPost.isPresent()) {
-//            Post post = optionalPost.get();
-//
-//            if (isPrincipalOwnerOfPost(principal, post)) {
-//                postService.delete(post);
-//                return "redirect:/";
-//            } else {
-//                return "views/error/403";
-//            }
-//
-//        } else {
-//            return "views/error/default";
-//        }
-//    }
     @RequestMapping("/posts")
     public String index(@RequestParam(defaultValue = "0") int page, Model model){
         Page<Post> posts = this.postService.findAllOrderedByDatePageable(page);
@@ -277,14 +215,25 @@ public class PostController {
         return "views/posts/postList";
     }
 
-//    @PostMapping("/post/review")
-//    public String ratePost(@RequestParam("rating") Integer rating, @ModelAttribute Post post){
-//        post.updateRatedCount();
-//        post.updateAvgRating(rating);
-//        return "redirect:/posts";
-//    }
 
     private boolean isPrincipalOwnerOfPost(Principal principal, Post post) {
         return principal != null && principal.getName().equals(post.getUser().getUsername());
+    }
+
+    @RequestMapping("/posts/earning")
+    public String showEarning(@RequestParam(defaultValue = "0") int page, Model model){
+        Page<Post> posts = this.postService.findAllOrderedByDatePageable(page);
+
+        List<Post> postList = posts.getContent();
+
+        for(Post p: postList){
+            p.setEarning(postService.getEarningByPost(p.getId()));
+            postService.create(p);
+        }
+        Pager pager = new Pager(posts);
+        model.addAttribute("account", new Account());
+        model.addAttribute("avgRatingMap", ArithmeticUtils.getAvgRatingMap(postService.findAll()));
+        model.addAttribute("pager", pager);
+        return "views/posts/earningPostList";
     }
 }
