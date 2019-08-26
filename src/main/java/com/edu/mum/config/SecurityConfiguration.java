@@ -47,10 +47,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
 
         http.authorizeRequests()
-                .antMatchers("/","/images/**","/index","/error/**","/error?*","/users/register").permitAll()
+                .antMatchers("/","/images/**","/index","/error/**","/error?*","/users/register","/about-us","/fullSearch","/fullSearch/**").permitAll()
+                .antMatchers("/posts/earning","/posts/view/**").authenticated()
+                .antMatchers("/payment/save/{id}","/account/save/{id}","/category/list","/category/new","/category/update","/category/edit/{id}"
+                        ,"/category/delete/{id}","/payment/save/{id}","/account/save/{id}").hasRole("ADMIN")
 //                .antMatchers("/", "/index", "/error/**", "/posts/**", "/users/logout", "/users/register", "/users/login").permitAll()
-                .antMatchers("/commentPost/**").hasRole("USER")
-                .antMatchers("/posts/view/**","/posts/review/**").hasAnyRole("USER","ADMIN")
+                .antMatchers("/commentPost/**","posts/review/**").hasRole("USER")
+                .antMatchers("/posts/earning","/posts/view/**").hasAnyRole("USER","ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
